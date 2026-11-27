@@ -2,6 +2,8 @@ export const PREFIX_PATH_ADMIN = "/admin";
 export const PREFIX_PATH_AUTH = "/auth";
 
 export const ROUTES_LINKS = {
+    // RUTA BASE
+    base_route: '/',
     // AUTH
     signin_route: `${PREFIX_PATH_AUTH}/signin`,
     signup_route: `${PREFIX_PATH_AUTH}/signup`,

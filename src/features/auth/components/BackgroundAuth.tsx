@@ -27,7 +27,7 @@ const BackgroundAuth = ({ children }: Props) => {
             <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px] dark:bg-black/75" />
 
             {/* TARJETA CENTRADA CON ESTILO GLASSMORPHISM */}
-            <div className="relative z-10 w-full max-w-md rounded-3xl border border-white/20 bg-light-accent/85 p-6 sm:p-8 shadow-2xl backdrop-blur-lg ring-1 ring-inset ring-white/10 dark:border-white/50 dark:bg-gray-dark/60 dark:shadow-black/70">
+            <div className="relative z-10 w-full max-w-md rounded-3xl border border-white/20 p-6 sm:p-8 shadow-2xl backdrop-blur-lg ring-1 ring-inset ring-white/10 dark:border-white/50 bg-black/60 dark:shadow-black/70">
                 {children}
             </div>
         </section>

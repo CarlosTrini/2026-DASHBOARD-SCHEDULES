@@ -3,7 +3,7 @@ import { authLoginData } from "@/features/auth/signin/schemas/authLoginSchema";
 // systemTypes.ts
 export type Days = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
 export type StatusSchedule = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'rescheduled';
-export type RoleSystem = "admin" | "receptionist";
+export type RoleSystem = "admin" | "dentist" | "receptionist" | "assistant" | '';
 export type StatusStaff = "active" | "inactive" | "vacation" | "sick" | "leave" | "dayOff";
 export type StatusDay = 'open' | 'closed' | 'half-day';
 
@@ -39,19 +39,20 @@ export interface AvailabilitySchedule {
 // Usuario del sistema. No tiene tabla en la base de datos (ver pendientes de la documentación) se genera de data del staff...
 export interface UserSystem {
     id: string;
-    idHeadquarter: string;
+    idHeadquarter: string[];
     name: string;
     lastName?: string;
     email: string;
     role: RoleSystem;
     image?: string;
     status: StatusStaff;
+    token: string;
 }
 
 // Personal (tabla staff). Un solo rol y un solo estatus a la vez
 export interface Staff {
     id: string;
-    idHeadquarter: string;
+    idHeadquarter: string[];
     name: string;
     lastName: string;
     email: string;

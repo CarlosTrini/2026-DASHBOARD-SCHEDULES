@@ -90,7 +90,7 @@ export default function SignupView() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {/* Nombre */}
                     <div>
-                        <Label htmlFor="name">
+                        <Label htmlFor="name" className="system-text-theme-light!">
                             Nombre <span className="text-error">*</span>
                         </Label>
                         <Input
@@ -100,12 +100,13 @@ export default function SignupView() {
                             size="md"
                             {...register('name')}
                             error={!!errors.name}
+                            className="bg-black-light! system-text-theme-light! placeholder:text-light-accent/50"
                         />
                     </div>
 
                     {/* Apellidos */}
                     <div>
-                        <Label htmlFor="lname">
+                        <Label htmlFor="lname" className="system-text-theme-light!">
                             Apellidos <span className="text-error">*</span>
                         </Label>
                         <Input
@@ -115,13 +116,14 @@ export default function SignupView() {
                             size="md"
                             {...register('lastName')}
                             error={!!errors.lastName}
+                            className="bg-black-light! system-text-theme-light! placeholder:text-light-accent/50"
                         />
                     </div>
                 </div>
 
                 {/* Correo Electrónico */}
                 <div>
-                    <Label htmlFor="email">
+                    <Label htmlFor="email" className="system-text-theme-light!">
                         Correo Electrónico <span className="text-error">*</span>
                     </Label>
                     <Input
@@ -131,12 +133,13 @@ export default function SignupView() {
                         size="md"
                         {...register('email')}
                         error={!!errors.email}
+                        className="bg-black-light! system-text-theme-light! placeholder:text-light-accent/50"
                     />
                 </div>
 
                 {/* Contraseña */}
                 <div>
-                    <Label htmlFor="password">
+                    <Label htmlFor="password" className="system-text-theme-light!">
                         Contraseña <span className="text-error">*</span>
                     </Label>
                     <div className="relative">
@@ -147,6 +150,8 @@ export default function SignupView() {
                             size="md"
                             {...register('password')}
                             error={!!errors.password}
+                            className="bg-black-light! system-text-theme-light! placeholder:text-light-accent/50"
+
                         />
                         <button
                             type="button"
@@ -156,9 +161,9 @@ export default function SignupView() {
                             aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
                         >
                             {showPassword ? (
-                                <EyeIcon className="h-5 w-5 fill-current" />
+                                <EyeIcon className="h-5 w-5 text-light-accent" />
                             ) : (
-                                <EyeClosedIcon className="h-5 w-5 fill-current" />
+                                <EyeClosedIcon className="h-5 w-5 text-light-accent" />
                             )}
                         </button>
                     </div>
@@ -173,14 +178,14 @@ export default function SignupView() {
                     />
                     <label
                         htmlFor="terms"
-                        className="cursor-pointer text-xs sm:text-sm text-theme-light-gray leading-relaxed select-none hover:text-gray-dark dark:hover:text-light pt-0.5"
+                        className="cursor-pointer text-xs sm:text-sm system-text-theme-light! leading-relaxed select-none hover:text-gray-dark dark:hover:text-light pt-0.5"
                     >
                         Acepto los{" "}
-                        <span className="font-medium text-gray-dark dark:text-light hover:underline">
+                        <span className="font-medium text-brand dark:text-brand-light hover:underline">
                             Términos y Condiciones
                         </span>{" "}
                         y la{" "}
-                        <span className="font-medium text-gray-dark dark:text-light hover:underline">
+                        <span className="font-medium text-brand dark:text-brand-light hover:underline">
                             Política de Privacidad
                         </span>.
                     </label>
@@ -217,8 +222,8 @@ export default function SignupView() {
 
             {/* Redirección a Iniciar Sesión */}
             <div className="mt-8 text-center sm:text-start">
-                <p className="text-sm text-theme-light-gray">
-                    ¿Ya tienes una cuenta médica?{" "}
+                <p className="text-sm system-text-theme-light">
+                    ¿Ya tienes una cuenta?{" "}
                     <Link
                         href={ROUTES_LINKS.signin_route}
                         className="font-semibold text-brand transition-colors hover:text-brand-dark dark:text-brand-light dark:hover:text-brand"

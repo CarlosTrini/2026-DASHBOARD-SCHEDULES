@@ -47,10 +47,14 @@ const COLUMNS = [
 ] as const;
 
 // Configuración visual de Roles
-const ROLE_CONFIG: Record<Staff["role"], { label: string; color: "primary" | "info" }
+const ROLE_CONFIG: Record<
+    Staff["role"],
+    { label: string; color: "primary" | "info" | "success" | "warning" }
 > = {
     admin: { label: "Administrador", color: "primary" },
+    dentist: { label: "Dentista", color: "success" },
     receptionist: { label: "Recepcionista", color: "info" },
+    assistant: { label: "Asistente Dental", color: "warning" },
 };
 
 // Configuración visual de Estados

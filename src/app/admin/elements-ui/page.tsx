@@ -43,6 +43,8 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import Tooltip from "@/components/ui/tooltip/Tooltip";
+import Fallback from "@/components/fallbackQuery/Fallback";
+import Skeleton from "@/components/skeleton/Skeleton";
 
 // Icons
 import {
@@ -57,6 +59,9 @@ import {
   Plus,
   Trash2,
   ExternalLink,
+  Activity,
+  Inbox,
+  RotateCcw,
 } from "lucide-react";
 
 export default function ElementsUiPage() {
@@ -65,6 +70,10 @@ export default function ElementsUiPage() {
   const [radioSmValue, setRadioSmValue] = useState<string>("opt1");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [activeAlert, setActiveAlert] = useState<AlertProps | null>(null);
+
+  // State for Fallback & Skeleton interactive demos
+  const [fallbackState, setFallbackState] = useState<"loading-default" | "loading-skeleton" | "success" | "empty" | "error">("success");
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   const {
     isOpen: isModalOpen,
@@ -159,7 +168,7 @@ export default function ElementsUiPage() {
             </div>
             <p className="text-xs sm:text-sm text-gray dark:text-gray-light leading-relaxed">
               Referencia completa de todos los componentes modulares incluidos en el template.
-              Organizados por secciones funcionales: <strong>FORM</strong>, <strong>TABS</strong> y <strong>UI</strong>.
+              Organizados por secciones funcionales: <strong>FORM</strong>, <strong>TABS</strong>, <strong>UI</strong> y <strong>FALLBACK & SKELETON</strong>.
             </p>
           </div>
 
@@ -182,6 +191,12 @@ export default function ElementsUiPage() {
               className="rounded-lg border border-gray-light bg-light px-3 py-1.5 text-xs font-semibold text-gray-dark hover:border-brand hover:text-brand dark:border-gray/30 dark:bg-black/30 dark:text-light dark:hover:border-brand-light transition-colors"
             >
               # 3. UI
+            </a>
+            <a
+              href="#section-fallback"
+              className="rounded-lg border border-gray-light bg-light px-3 py-1.5 text-xs font-semibold text-gray-dark hover:border-brand hover:text-brand dark:border-gray/30 dark:bg-black/30 dark:text-light dark:hover:border-brand-light transition-colors"
+            >
+              # 4. FALLBACK & SKELETON
             </a>
           </div>
         </div>
@@ -886,6 +901,242 @@ export default function ElementsUiPage() {
               </div>
             </ComponentCard>
           </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* SECCIÓN 4: FALLBACK & SKELETON                            */}
+      {/* ========================================================= */}
+      <section id="section-fallback" className="space-y-6 scroll-mt-24">
+        <div className="flex items-center gap-2.5 border-b border-gray-light pb-3 dark:border-gray/30">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-light shadow-theme-xs">
+            <Activity className="h-4 w-4" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-gray-dark dark:text-light tracking-tight">
+              4. Estados de Carga, Error y Skeleton (src/components/fallbackQuery/* & src/components/skeleton/*)
+            </h2>
+            <p className="text-xs text-gray dark:text-gray-light">
+              Manejo estandarizado del ciclo de vida de peticiones asíncronas con TanStack Query: Skeletons atómicos, contenedores, loaders, error con reintento y estado vacío.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Card: Skeleton Component */}
+          <ComponentCard
+            title="Skeleton (Componente Base)"
+            desc="Estructuras visuales con pulso animado para evitar saltos de diseño (CLS) durante la carga asíncrona."
+          >
+            <div className="space-y-5">
+              {/* Tipos Atómicos */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-gray-dark dark:text-light">
+                  1. Tipos Atómicos: Avatar y Textos
+                </span>
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-light/60 bg-light/30 dark:border-gray/20 dark:bg-black/20">
+                  <Skeleton type="avatar" className="size-12 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton type="text" className="h-4 w-3/4" />
+                    <Skeleton type="text" className="h-3 w-1/2" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Contenedor Compuesto */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-gray-dark dark:text-light">
+                  2. Contenedor Compuesto (type="container")
+                </span>
+                <Skeleton type="container" className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Skeleton type="avatar" className="size-10" />
+                      <div className="space-y-1.5">
+                        <Skeleton type="text" className="h-3.5 w-32" />
+                        <Skeleton type="text" className="h-2.5 w-20" />
+                      </div>
+                    </div>
+                    <Skeleton type="text" className="h-6 w-16 rounded-full" />
+                  </div>
+                  <div className="space-y-2 pt-2 border-t border-gray/10 dark:border-gray/20">
+                    <Skeleton type="text" className="h-3 w-full" />
+                    <Skeleton type="text" className="h-3 w-4/5" />
+                  </div>
+                </Skeleton>
+              </div>
+
+              {/* Código de referencia */}
+              <div className="text-xs text-gray dark:text-gray-light bg-light-accent p-3 rounded-lg border border-gray/10 dark:bg-black-light space-y-1 font-mono">
+                <p className="text-gray-dark dark:text-light font-sans font-semibold">Variantes disponibles:</p>
+                <p>{`<Skeleton type="avatar" className="size-10" />`}</p>
+                <p>{`<Skeleton type="text" className="h-4 w-48" />`}</p>
+                <p>{`<Skeleton type="container">{children}</Skeleton>`}</p>
+              </div>
+            </div>
+          </ComponentCard>
+
+          {/* Card: Fallback Component (Interactive Demo) */}
+          <ComponentCard
+            title="Fallback (Gestor de Estados TanStack Query)"
+            desc="Controlador integral de ciclo de vida. Haz clic en cada botón para simular en tiempo real cómo responde el componente:"
+          >
+            <div className="space-y-5">
+              {/* Controles interactivos */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-gray-dark dark:text-light">
+                  Simular Estado:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setFallbackState("success")}
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
+                      fallbackState === "success"
+                        ? "bg-success text-white shadow-xs"
+                        : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
+                    }`}
+                  >
+                    1. Éxito (Con Datos)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFallbackState("loading-default")}
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
+                      fallbackState === "loading-default"
+                        ? "bg-brand text-white shadow-xs"
+                        : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
+                    }`}
+                  >
+                    2. Carga (Spinner)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFallbackState("loading-skeleton")}
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
+                      fallbackState === "loading-skeleton"
+                        ? "bg-brand text-white shadow-xs"
+                        : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
+                    }`}
+                  >
+                    3. Carga (Custom Skeleton)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFallbackState("empty")}
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
+                      fallbackState === "empty"
+                        ? "bg-warning text-white shadow-xs"
+                        : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
+                    }`}
+                  >
+                    4. Sin Datos (Placeholder)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFallbackState("error")}
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
+                      fallbackState === "error"
+                        ? "bg-error text-white shadow-xs"
+                        : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
+                    }`}
+                  >
+                    5. Error (con onRetry)
+                  </button>
+                </div>
+              </div>
+
+              {/* Contenedor del Fallback en vivo */}
+              <div className="rounded-xl border border-gray-light/60 bg-light/30 p-4 dark:border-gray/20 dark:bg-black/20 min-h-52 flex flex-col justify-center">
+                <Fallback
+                  id="elements-ui-fallback-demo"
+                  isLoading={fallbackState === "loading-default" || fallbackState === "loading-skeleton"}
+                  isError={fallbackState === "error"}
+                  data={
+                    fallbackState === "empty"
+                      ? []
+                      : fallbackState === "success"
+                      ? [{ id: 1, name: "Dr. Roberto Casas", role: "Cirujano General" }]
+                      : null
+                  }
+                  errorMsg="Error de red (500): Fallo de conexión con el servidor clínico."
+                  onRetry={() => {
+                    setRetryCount((prev) => prev + 1);
+                    setFallbackState("loading-skeleton");
+                    setTimeout(() => setFallbackState("success"), 1000);
+                  }}
+                  customLoader={
+                    fallbackState === "loading-skeleton" ? (
+                      <Skeleton type="container" className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Skeleton type="avatar" className="size-10" />
+                          <div className="space-y-1.5 flex-1">
+                            <Skeleton type="text" className="h-4 w-40" />
+                            <Skeleton type="text" className="h-3 w-24" />
+                          </div>
+                        </div>
+                        <Skeleton type="text" className="h-3 w-full" />
+                      </Skeleton>
+                    ) : undefined
+                  }
+                  noDataPlaceholder={
+                    <div className="py-6 flex flex-col items-center justify-center text-center gap-2">
+                      <div className="p-3 rounded-full bg-gray/10 dark:bg-gray/20 text-gray">
+                        <Inbox className="size-6" />
+                      </div>
+                      <h4 className="text-sm font-semibold text-gray-dark dark:text-light">
+                        No hay registros disponibles
+                      </h4>
+                      <p className="text-xs text-gray dark:text-gray-light max-w-xs">
+                        Intenta ajustar tus filtros de búsqueda o agrega un nuevo colaborador.
+                      </p>
+                    </div>
+                  }
+                >
+                  {/* Contenido cuando el estado es Exitoso */}
+                  <div className="p-4 rounded-xl border border-success/30 bg-success/5 dark:bg-success/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <AvatarText name="Roberto Casas" size="small" />
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-dark dark:text-light">
+                            Dr. Roberto Casas
+                          </h4>
+                          <span className="text-xs text-gray dark:text-gray-light">
+                            Cirujano General • Sede Centro
+                          </span>
+                        </div>
+                      </div>
+                      <Badge color="success" size="sm">
+                        Activo
+                      </Badge>
+                    </div>
+                    {retryCount > 0 && (
+                      <p className="text-xs text-success font-medium pt-2 border-t border-success/20 flex items-center gap-1">
+                        <CheckCircle2 className="size-3.5" /> Reintentado con éxito ({retryCount} {retryCount === 1 ? "vez" : "veces"})
+                      </p>
+                    )}
+                  </div>
+                </Fallback>
+              </div>
+
+              {/* Resumen de uso en código */}
+              <div className="text-xs text-gray dark:text-gray-light bg-light-accent p-3 rounded-lg border border-gray/10 dark:bg-black-light space-y-1 font-mono">
+                <p className="text-gray-dark dark:text-light font-sans font-semibold">Integración típica con useQuery:</p>
+                <p>{`<Fallback`}</p>
+                <p className="pl-4">{`id="staff-fallback"`}</p>
+                <p className="pl-4">{`isLoading={isLoading}`}</p>
+                <p className="pl-4">{`isError={isError}`}</p>
+                <p className="pl-4">{`data={staffList}`}</p>
+                <p className="pl-4">{`customLoader={<StaffSkeleton />}`}</p>
+                <p className="pl-4">{`noDataPlaceholder={<EmptyPlaceholder />}`}</p>
+                <p className="pl-4">{`onRetry={() => refetch()}`}</p>
+                <p>{`>`}</p>
+                <p className="pl-4">{`<StaffTable data={staffList} />`}</p>
+                <p>{`</Fallback>`}</p>
+              </div>
+            </div>
+          </ComponentCard>
         </div>
       </section>
     </div>

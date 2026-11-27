@@ -1,7 +1,8 @@
-
+'use client'
+import { ROUTES_LINKS } from "@/utils/constants";
 import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 
 interface Props {
     breadcrumbText: string;
@@ -11,28 +12,31 @@ interface Props {
 }
 
 export default function TopAuth({ breadcrumbText, pageTitle, subtitle, showSocialLogin = false }: Props) {
+
+    const router = useRouter();
+
     return (
         <>
             {/* Retorno al inicio */}
-            {/* < div className="mb-3 " >
+            < div className="mb-3 text-end">
                 <Link
-                    href="/"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-theme-light-gray transition-colors hover:text-gray-dark dark:hover:text-light hover:bg-black-light p-2 rounded-xl"
+                    href={ROUTES_LINKS.base_route}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-theme-light-gray transition-colors system-text-theme-light hover:text-brand p-2 rounded-xl"
                 >
                     <ChevronLeftIcon className="h-5 w-5 rtl:rotate-180" />
                     <span>Volver al inicio</span>
                 </Link>
-            </div > */}
+            </div >
 
             {/* Encabezado */}
             < div className="mb-8" >
-                <h1 className="mb-2 text-2xl font-bold text-gray-dark sm:text-3xl dark:text-light">
+                <h1 className="mb-2 text-2xl font-bold system-text-theme-light">
                     {pageTitle}
                 </h1>
-                <span className="mb-2 inline-block text-xs font-bold uppercase tracking-wider text-brand dark:text-brand-light">
+                <span className="mb-2 inline-block text-xs font-bold uppercase tracking-wider text-brand dark:text-brand-light italic">
                     {breadcrumbText}
                 </span>
-                <p className="text-sm text-theme-light-gray italic">
+                <p className="text-sm system-text-theme-light italic">
                     {subtitle}
                 </p>
             </div >

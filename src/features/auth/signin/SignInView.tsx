@@ -26,6 +26,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from "@tanstack/react-query";
 
 // TYPES
+import type { UserSystem } from "@/types/systemTypes";
 
 
 // STORES
@@ -33,10 +34,12 @@ import { useMutation } from "@tanstack/react-query";
 // import { useHeadquarterStore } from "@/store/useHeadquarterStore";
 
 //SERVICES
-import { LoginActionService } from "../services/index";
+import { AuthActionService } from "../services/index";
 import Link from "next/link";
 import { ROUTES_LINKS } from "@/utils/constants";
 import BackgroundAuth from "../components/BackgroundAuth";
+import Alert from "@/components/ui/alert/Alert";
+import { saveCookieToken } from "@/utils/cookieActionsToken";
 
 
 
@@ -47,7 +50,6 @@ export default function SignInView() {
     // ROUTER - STATES--
     const [showPassword, setShowPassword] = useState(false);
     const [showOverlay, setShowOverlay] = useState(false);
-    const [errorMsg, setErrorMsg] = useState('');
     const Navigate = useRouter();
 
     // ZUSTAND
@@ -83,59 +85,53 @@ export default function SignInView() {
 
     // const queryClient = useQueryClient();
     // MUTAT PARA USUARIO LOGUEADO
-    // const { mutate: handleLogin, isPending } = useMutation({
-    //     mutationKey: ['login'],
-    //     mutationFn: (data: AuthLogin) => AuthActionsService.loginUserSystem(data),
-    //     onSuccess: (res) => {
-    //         const dataUser = res?.data;
-
-    //         if (res.status !== 200) return;
-
-    //         if (dataUser) {
-    //             // Guardar cookie por 1 día
-    //             document.cookie = `auth_token=${dataUser.token}; path=/; max-age=86400; SameSite=Lax`;
-    //             const userInfo = dataUser.user as Personal;
-
-    //             setToken(dataUser.token);
-    //             setUserInfo({
-    //                 id: userInfo.id,
-    //                 assigments: userInfo.locationAssignments,
-    //                 emailVerified: userInfo.security.emailVerified,
-    //                 image: userInfo.image,
-    //                 name: userInfo.personalInfo.name,
-    //                 lastName: userInfo.personalInfo.lastName,
-    //                 status: userInfo.status,
-    //                 email: userInfo.contactInfo.email
-    //             });
-    //             setIsAuthenticated(true);
-    //             reset();
-    //             setErrorMsg('');
-
-    //             // revisar a cuantás sedes pertenece este persona
-    //             if (userInfo.locationAssignments.length >= 2) {
-    //                 // TOOD: SE VA A MOSTRAR UN OVERLAY EN EL QUE SELECCIONÉ LA SEDE QUE VA A USAR
-    //                 setAllHeadquarters(userInfo.locationAssignments);
-    //                 Navigate.push('/admin/overlay');
-    //             } else {
-    //                 handleQuarters(userInfo.locationAssignments[0].headquartersId);
-    //                 setUserRole(userInfo.locationAssignments[0].roleSystem);
-    //             }
+    const { mutate: handleLogin, isPending, isError, error } = useMutation({
+        mutationKey: ['login-form'],
+        mutationFn: (data: authLoginData) => AuthActionService.authLogin(data),
+        onSuccess: (res) => {
+            const dataUser = res;
+            console.log(dataUser)
+            if (dataUser) {
+                saveCookieToken(dataUser.token);
 
 
+                // setToken(dataUser.token);
+                // setUserInfo({
+                //     id: userInfo.id,
+                //     assigments: userInfo.locationAssignments,
+                //     emailVerified: userInfo.security.emailVerified,
+                //     image: userInfo.image,
+                //     name: userInfo.personalInfo.name,
+                //     lastName: userInfo.personalInfo.lastName,
+                //     status: userInfo.status,
+                //     email: userInfo.contactInfo.email
+                // });
+                // setIsAuthenticated(true);
+                // reset();
+                // setErrorMsg('');
 
+                // revisar a cuantás sedes pertenece este persona
+                // if (userInfo.locationAssignments.length >= 2) {
+                //     // TOOD: SE VA A MOSTRAR UN OVERLAY EN EL QUE SELECCIONÉ LA SEDE QUE VA A USAR
+                //     setAllHeadquarters(userInfo.locationAssignments);
+                //     Navigate.push('/admin/overlay');
+                // } else {
+                //     handleQuarters(userInfo.locationAssignments[0].headquartersId);
+                //     setUserRole(userInfo.locationAssignments[0].roleSystem);
+                // }
+            }
+        },
+        onError: (err: any) => {
+            console.log(err)
 
-
-    //         }
-    //     },
-    //     onError: (err: any) => {
-    //         setErrorMsg(err?.response?.data?.message || 'Ha ocurrido un error');
-    //     }
-    // });
+        }
+    });
 
 
 
     const handleLoginSubmit = (data: authLoginData) => {
-        // handleLogin(data);
+        // PASO 1: AL HACER LOGIN, LOGUEAR Y LLENAR STORE
+        handleLogin(data);
     };
 
 
@@ -149,116 +145,127 @@ export default function SignInView() {
     // =================================================================
 
     return (
-        <BackgroundAuth>
-            <TopAuth
-                breadcrumbText='Portal de citas'
-                pageTitle='Iniciar Sesión'
-                subtitle='Ingresa tus credenciales para acceder a la plataforma.'
-            />
+        <>
+            <BackgroundAuth>
+                <TopAuth
+                    breadcrumbText='Portal de citas'
+                    pageTitle='Iniciar Sesión'
+                    subtitle='Ingresa tus credenciales para acceder a la plataforma.'
+                />
 
-            {/* Formulario */}
-            <form onSubmit={handleSubmit(handleLoginSubmit)} className="space-y-5">
-                <div>
-                    <Label htmlFor="email" className="italic">
-                        Correo Electrónico <span className="text-error">*</span>
-                    </Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        placeholder="example@example.com"
-                        size="md"
-                        {...register('email')}
-                        error={!!errors.email}
-                    />
-                </div>
-
-                <div>
-                    <Label htmlFor="password" className="italic">
-                        Contraseña <span className="text-error">*</span>
-                    </Label>
-                    <div className="relative">
+                {/* Formulario */}
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSubmit(handleLoginSubmit)(e);
+                    }}
+                    noValidate
+                    className="space-y-5"
+                >
+                    <div>
+                        <Label htmlFor="email" className="italic system-text-theme-light!">
+                            Correo Electrónico <span className="text-error">*</span>
+                        </Label>
                         <Input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="••••••••"
+                            id="email"
+                            type="email"
+                            placeholder="example@example.com"
                             size="md"
-                            {...register('password')}
-                            error={!!errors.password}
+                            {...register('email')}
+                            error={!!errors.email}
+                            className="bg-black-light! system-text-theme-light! placeholder:text-light-accent/50"
                         />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray transition-colors hover:text-gray-dark dark:text-gray-light dark:hover:text-light cursor-pointer"
-                            tabIndex={-1}
-                            aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
-                        >
-                            {showPassword ? (
-                                <EyeIcon className="h-5 w-5 " />
-                            ) : (
-                                <EyeClosedIcon className="h-5 w-5 " />
-                            )}
-                        </button>
                     </div>
-                </div>
 
-                <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                        <Checkbox
-                            id="remember"
-                            {...register('rememberMe')}
-                            error={!!errors.rememberMe}
-                        />
-                        <label
-                            htmlFor="remember"
-                            className="cursor-pointer text-sm text-theme-light-gray select-none hover:text-gray-dark dark:hover:text-light"
-                        >
-                            Recordar sesión
-                        </label>
+                    <div>
+                        <Label htmlFor="password" className="italic system-text-theme-light!">
+                            Contraseña <span className="text-error">*</span>
+                        </Label>
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                size="md"
+                                {...register('password')}
+                                error={!!errors.password}
+                                className="bg-black-light! system-text-theme-light! placeholder:text-light-accent/50"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray transition-colors hover:text-gray-dark dark:text-gray-light dark:hover:text-light cursor-pointer"
+                                tabIndex={-1}
+                                aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                            >
+                                {showPassword ? (
+                                    <EyeIcon className="text-light h-5 w-5" />
+                                ) : (
+                                    <EyeClosedIcon className="text-light h-5 w-5" />
+                                )}
+                            </button>
+                        </div>
                     </div>
-                    <Link
-                        href="/reset-password"
-                        className="text-sm font-medium text-brand transition-colors hover:text-brand-dark dark:text-brand-light dark:hover:text-brand"
-                    >
-                        ¿Olvidaste tu contraseña?
-                    </Link>
+
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                id="remember"
+                                {...register('rememberMe')}
+                                error={!!errors.rememberMe}
+                            />
+                            <label
+                                htmlFor="remember"
+                                className="cursor-pointer text-sm text-theme-light-gray select-none system-text-theme-light-gray"
+                            >
+                                Recordar sesión
+                            </label>
+                        </div>
+                        <Link
+                            href="/reset-password"
+                            className="text-sm font-medium text-brand transition-colors hover:text-brand-dark dark:text-brand-light dark:hover:text-brand"
+                        >
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+                    </div>
+
+                    <div>
+                        <Button disabled={isPending} type="submit" size="md" className="w-full justify-center mb-3">
+                            {
+                                isPending
+                                    ? (
+                                        <span className="flex gap-2 items-center">
+                                            <Loader className="w-7 h-7 text-white animate-[spin_2s_linear_infinite]" /> Iniciando sesión
+                                        </span>
+                                    )
+                                    : (
+                                        <span>Iniciar sesión</span>
+                                    )
+                            }
+                        </Button>
+                    </div>
+                </form>
+
+                {/* Redirección a Registro */}
+                <div className="mt-8 text-center sm:text-start">
+                    <p className="text-sm system-text-theme-light">
+                        ¿No tienes una cuenta?{" "}
+                        <Link
+                            href={ROUTES_LINKS.signup_route}
+                            className="font-semibold text-brand transition-colors hover:text-brand-dark dark:text-brand-light dark:hover:text-brand"
+                        >
+                            Registrarse
+                        </Link>
+                    </p>
                 </div>
 
-                <div>
-                    <Button type="submit" size="md" className="w-full justify-center mb-3">
-                        {
-                            false // isPending
-                                ? (
-                                    <span className="flex gap-2 items-center">
-                                        <Loader size="sm" className="w-7 h-7 text-white animate-[spin_2s_linear_infinite]" /> Iniciando sesión
-                                    </span>
-                                )
-                                : (
-                                    <span>Iniciar sesión</span>
-                                )
-                        }
-                    </Button>
-
-                    {
-                        errorMsg !== '' &&
-                        (
-                            <p className="bg-error-dark/50 text-light text-sm rounded-lg py-2 w-full mx-auto text-center">{errorMsg}</p>
-                        )
-                    }
-                </div>
-            </form>
-
-            {/* Redirección a Registro */}
-            <div className="mt-8 text-center sm:text-start">
-                <p className="text-sm text-theme-light-gray">
-                    ¿No tienes una cuenta médica?{" "}
-                    <Link
-                        href={ROUTES_LINKS.signup_route}
-                        className="font-semibold text-brand transition-colors hover:text-brand-dark dark:text-brand-light dark:hover:text-brand"
-                    >
-                        Registrarse
-                    </Link>
-                </p>
-            </div>
-        </BackgroundAuth>
+            </BackgroundAuth>
+            {/* ALERTS */}
+            {
+                isError && (
+                    <Alert title={error?.message} variant="error" timer={2000} position="top-center" />
+                )
+            }
+        </>
     );
 }

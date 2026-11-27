@@ -54,9 +54,9 @@ export default function RootLayout({
           <ThemeProvider>
             {/* <SidebarProvider> se comentan ya que se llevan a admin para que este layout solo sea visible en el dashboard del admin
               <DashboardLayout> */}
-            {/* <Suspense fallback={<Loading />} > */}
-            {children}
-            {/* </Suspense> */}
+            <Suspense fallback={<Loading />} >
+              {children}
+            </Suspense>
             {/* </DashboardLayout>
             </SidebarProvider> */}
           </ThemeProvider>
