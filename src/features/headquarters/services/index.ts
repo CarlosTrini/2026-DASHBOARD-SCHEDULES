@@ -2,23 +2,24 @@
 import type { Headquarters } from "@/types/headquarters";
 
 // FAKE DATA
-import { mockHeadquarters } from "@/utils/fakeData";
+import { mockDelay, mockHeadquarters } from "@/utils/fakeData";
 
 export const HeadquartersActionService = {
 
-    getHqsById: async (ids: string[]): Promise<Headquarters[]> => {
+    getHqsById: async (idHq: string): Promise<Headquarters> => {
         try {
-            if (!ids || ids.length == 0) {
-                throw new Error('El/los ids de las sedes son necesarios')
+
+            await mockDelay();
+
+            if (!idHq) {
+                throw new Error('El id de la sede es necesario')
             }
 
+            const sedeFounded = mockHeadquarters.find(hq => idHq == hq.id);
 
-            const sedesFounded = mockHeadquarters.filter(hq => ids.some(id => id == hq.id));
-            console.log(sedesFounded);
+            if (!sedeFounded) throw new Error('No se encontro la sede con el id proporcionado')
 
-            if (sedesFounded.length == 0) throw new Error('No se encontraron sedes con el id')
-
-            return sedesFounded;
+            return sedeFounded;
 
         } catch (error) {
             console.error('getHqsById', error);

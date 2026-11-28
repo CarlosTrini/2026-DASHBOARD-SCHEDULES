@@ -3,9 +3,59 @@ import { authLoginData } from "@/features/auth/signin/schemas/authLoginSchema";
 // systemTypes.ts
 export type Days = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
 export type StatusSchedule = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'rescheduled';
-export type RoleSystem = "admin" | "dentist" | "receptionist" | "assistant" | '';
+export type RoleSystem = "administrator" | "employee" | 'receptionist' | '';
 export type StatusStaff = "active" | "inactive" | "vacation" | "sick" | "leave" | "dayOff";
 export type StatusDay = 'open' | 'closed' | 'half-day';
+
+// Catálogo de permisos básicos del sistema (módulo:acción)
+export type SystemPermission =
+    // Citas / Agenda
+    | 'schedules:read'
+    | 'schedules:create'
+    | 'schedules:manage'
+
+    // Clientes / Pacientes
+    | 'clients:read'
+    | 'clients:manage'
+
+    // Personal / Staff
+    | 'staff:read'
+    | 'staff:manage'
+
+    // Servicios
+    | 'services:read'
+    | 'services:manage'
+
+    // Horarios de atención y Sede
+    | 'opening_hours:manage'
+    | 'headquarters:manage'
+
+    // Analítica y Reportes
+    | 'analytics:read';
+
+// Catálogo completo de permisos para admins/owners
+export const ALL_SYSTEM_PERMISSIONS: SystemPermission[] = [
+    'schedules:read',
+    'schedules:create',
+    'schedules:manage',
+    'clients:read',
+    'clients:manage',
+    'staff:read',
+    'staff:manage',
+    'services:read',
+    'services:manage',
+    'opening_hours:manage',
+    'headquarters:manage',
+    'analytics:read',
+];
+
+// Permisos básicos predeterminados para colaboradores operativos
+export const DEFAULT_STAFF_PERMISSIONS: SystemPermission[] = [
+    'schedules:read',
+    'schedules:create',
+    'clients:read',
+    'services:read',
+];
 
 // Bloque horario (tabla availability_slots)
 export interface TimeSlot {
@@ -43,7 +93,9 @@ export interface UserSystem {
     name: string;
     lastName?: string;
     email: string;
+    emailVerified: boolean;
     role: RoleSystem;
+    permissions: SystemPermission[];
     image?: string;
     status: StatusStaff;
     token: string;
@@ -56,8 +108,10 @@ export interface Staff {
     name: string;
     lastName: string;
     email: string;
+    emailVerified: boolean;
     password: string;
     role: RoleSystem;
+    permissions: SystemPermission[];
     jobPosition: string;
     image?: string;
     status: StatusStaff;
@@ -71,6 +125,10 @@ export interface Staff {
     createdAt: string;
 
 }
+
+// heardquartes (sedes)
+export type { Headquarters } from "./headquarters";
+
 
 // Relación personal-sede (tabla staff_headquarters)
 // export interface StaffHeadquarters {

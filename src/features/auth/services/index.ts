@@ -24,7 +24,9 @@ export const AuthActionService = {
                 name: user?.name,
                 lastName: user?.lastName,
                 email: user?.email,
+                emailVerified: user?.emailVerified ?? false,
                 role: user?.role,
+                permissions: user?.permissions ?? [],
                 image: user?.image,
                 status: user?.status,
             };

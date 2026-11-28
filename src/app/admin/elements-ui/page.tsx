@@ -825,7 +825,7 @@ export default function ElementsUiPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-gray-light/60 dark:divide-gray/20">
-                    <TableRow className="hover:bg-light/40 dark:hover:bg-white/[0.02] transition-colors">
+                    <TableRow className="hover:bg-light/40 dark:hover:bg-white/2 transition-colors">
                       <TableCell className="p-3.5 font-medium text-gray-dark dark:text-light flex items-center gap-2.5">
                         <AvatarText name="Alex Johnson" className="h-7 w-7 text-xs" />
                         <span>Alex Johnson</span>
@@ -843,7 +843,7 @@ export default function ElementsUiPage() {
                       </TableCell>
                     </TableRow>
 
-                    <TableRow className="hover:bg-light/40 dark:hover:bg-white/[0.02] transition-colors">
+                    <TableRow className="hover:bg-light/40 dark:hover:bg-white/2 transition-colors">
                       <TableCell className="p-3.5 font-medium text-gray-dark dark:text-light flex items-center gap-2.5">
                         <AvatarText name="Carolina Vega" className="h-7 w-7 text-xs" />
                         <span>Carolina Vega</span>
@@ -861,7 +861,7 @@ export default function ElementsUiPage() {
                       </TableCell>
                     </TableRow>
 
-                    <TableRow className="hover:bg-light/40 dark:hover:bg-white/[0.02] transition-colors">
+                    <TableRow className="hover:bg-light/40 dark:hover:bg-white/2 transition-colors">
                       <TableCell className="p-3.5 font-medium text-gray-dark dark:text-light flex items-center gap-2.5">
                         <AvatarText name="Mateo Ruiz" className="h-7 w-7 text-xs" />
                         <span>Mateo Ruiz</span>
@@ -991,55 +991,50 @@ export default function ElementsUiPage() {
                   <button
                     type="button"
                     onClick={() => setFallbackState("success")}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
-                      fallbackState === "success"
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${fallbackState === "success"
                         ? "bg-success text-white shadow-xs"
                         : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
-                    }`}
+                      }`}
                   >
                     1. Éxito (Con Datos)
                   </button>
                   <button
                     type="button"
                     onClick={() => setFallbackState("loading-default")}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
-                      fallbackState === "loading-default"
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${fallbackState === "loading-default"
                         ? "bg-brand text-white shadow-xs"
                         : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
-                    }`}
+                      }`}
                   >
                     2. Carga (Spinner)
                   </button>
                   <button
                     type="button"
                     onClick={() => setFallbackState("loading-skeleton")}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
-                      fallbackState === "loading-skeleton"
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${fallbackState === "loading-skeleton"
                         ? "bg-brand text-white shadow-xs"
                         : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
-                    }`}
+                      }`}
                   >
                     3. Carga (Custom Skeleton)
                   </button>
                   <button
                     type="button"
                     onClick={() => setFallbackState("empty")}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
-                      fallbackState === "empty"
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${fallbackState === "empty"
                         ? "bg-warning text-white shadow-xs"
                         : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
-                    }`}
+                      }`}
                   >
                     4. Sin Datos (Placeholder)
                   </button>
                   <button
                     type="button"
                     onClick={() => setFallbackState("error")}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${
-                      fallbackState === "error"
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition cursor-pointer ${fallbackState === "error"
                         ? "bg-error text-white shadow-xs"
                         : "border border-gray-light bg-light text-gray-dark dark:border-gray/30 dark:bg-black/30 dark:text-light"
-                    }`}
+                      }`}
                   >
                     5. Error (con onRetry)
                   </button>
@@ -1056,8 +1051,8 @@ export default function ElementsUiPage() {
                     fallbackState === "empty"
                       ? []
                       : fallbackState === "success"
-                      ? [{ id: 1, name: "Dr. Roberto Casas", role: "Cirujano General" }]
-                      : null
+                        ? [{ id: 1, name: "Dr. Roberto Casas", role: "Cirujano General" }]
+                        : null
                   }
                   errorMsg="Error de red (500): Fallo de conexión con el servidor clínico."
                   onRetry={() => {

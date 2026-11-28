@@ -2,17 +2,30 @@
 
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useRouter } from "next/navigation";
-import { ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { ChevronDown, User, Settings, LogOut, CheckCheck } from "lucide-react";
 import { cn } from "@/utils";
 import { useRef, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import Badge from "../ui/badge/Badge";
+import { useUserStore } from "@/store/useUserStore";
+import { useHeadquarterStore } from "@/store/useHeadquarterStore";
+import { deleteCookieToken } from "@/utils/cookieActionsToken";
+import { ROUTES_LINKS } from "@/utils/constants";
 
 export default function UserDropdown() {
-  const router = useRouter();
+  // HOOKS
+  const Navigate = useRouter();
+
+  // STATES
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // ZUSTAN - STORE
+  const { clearAllSession, userInfo, userRole } = useUserStore();
+  const { clearHeadquarter } = useHeadquarterStore();
+
+  // FUNCTIONS
 
   useClickOutside(dropdownRef, () => {
     setIsOpen(false);
@@ -27,33 +40,39 @@ export default function UserDropdown() {
   };
 
   const closeSession = () => {
-    document.cookie = "auth_token=; path=/; max-age=0;";
-    router.push("/");
+    clearAllSession();
+    clearHeadquarter();
+    deleteCookieToken();
+    Navigate.push(ROUTES_LINKS.signin_route);
   };
 
+  // RENDER
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className="dropdown-toggle flex items-center gap-2.5 rounded-xl p-1 sm:pe-2.5 transition-colors hover:bg-light dark:hover:bg-black-light border border-transparent hover:border-gray-light dark:hover:border-gray/30 cursor-pointer"
       >
-        <div className="relative h-10 w-10 shrink-0 rounded-full ring-2 ring-brand/20 dark:ring-brand/40 bg-brand/10 flex items-center justify-center text-brand font-bold overflow-hidden">
-          <img
-            width={40}
-            height={40}
-            src="https://imgs.search.brave.com/wv8hxsCe54rj7_QMQ7Rg_FkU_lUqCO81L_GNaw6DdkA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvaGQvY2hp/Y2tlbi1saXR0bGUt/YmFja2dyb3VuZC1t/Zzh3dGtmZGtmeGlj/OWtlLmpwZw"
-            alt="Foto usuario"
-            className="object-cover h-full w-full"
-          />
-          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-light-accent dark:ring-gray-dark" />
+        <div className="relative">
+
+          <div className="relative h-10 w-10 shrink-0 rounded-full ring-2 ring-brand/20 dark:ring-brand/40 bg-brand/10 flex items-center justify-center text-brand font-bold overflow-hidden">
+            <img
+              width={40}
+              height={40}
+              src="https://imgs.search.brave.com/wv8hxsCe54rj7_QMQ7Rg_FkU_lUqCO81L_GNaw6DdkA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvaGQvY2hp/Y2tlbi1saXR0bGUt/YmFja2dyb3VuZC1t/Zzh3dGtmZGtmeGlj/OWtlLmpwZw"
+              alt="Foto usuario"
+              className="object-cover h-full w-full"
+            />
+          </div>
+          <span className="absolute bottom-0 right-0 z-100 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-light-accent dark:ring-gray-dark" />
         </div>
 
         <div className="hidden text-start sm:block">
           <span className="block text-sm font-semibold text-gray-dark dark:text-light leading-tight">
-            User full name
+            {userInfo?.name}
           </span>
-          <Badge color="info" variant="light" size="sm">
-            Usuario
+          <Badge color="info" className="mt-2" variant="light" size="sm">
+            {userRole || '...'}
           </Badge>
         </div>
 
@@ -72,10 +91,23 @@ export default function UserDropdown() {
       >
         <div className="mb-3 border-b border-gray-light pb-3 dark:border-gray/30">
           <span className="block text-theme-sm font-semibold text-gray-dark dark:text-light">
-            User full name
+            {userInfo?.name} {userInfo?.lastName}
           </span>
-          <span className="mt-0.5 block text-xs system-text-theme-light-gray truncate">
-            usuario@ejemplo.com
+          <span className="mt-2 flex items-center gap-1 text-xs system-text-theme-light-gray truncate">
+            {userInfo?.email}
+            <Badge
+              className="ml-2"
+              color={userInfo?.emailVerified ? 'success' : 'error'}
+              variant="solid"
+              size="xs"
+              dot={!userInfo?.emailVerified}
+            >
+
+
+              {userInfo?.emailVerified ? <CheckCheck className="h-3 w-3" /> : 'No verificado'}
+
+
+            </Badge>
           </span>
         </div>
 

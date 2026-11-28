@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSidebar } from "../context/SidebarContext";
+import { useUserStore } from "@/store/useUserStore";
+import { useHeadquarterStore } from "@/store/useHeadquarterStore";
 import {
   LayoutDashboard,
   Layers,
-  Settings,
   LogOut,
   ChevronDown,
   X,
@@ -18,9 +19,12 @@ import {
   UserCircle2,
   FileCheck,
   Clock,
+  CircleOffIcon,
 } from "lucide-react";
 import type { SidebarNavItem } from "@/types/navTypes";
 import { PREFIX_PATH_ADMIN, ROUTES_LINKS } from "@/utils/constants";
+import { deleteCookieToken } from "@/utils/cookieActionsToken";
+import SelectHeadquarters from "@/components/selectHeadquarters/SelectHeadquarters";
 
 interface NavigationSection {
   title?: string;
@@ -28,7 +32,7 @@ interface NavigationSection {
 }
 
 
-
+// MENU DE NAVEGACIÓN
 const navigationSections: NavigationSection[] = [
   {
     title: "General",
@@ -81,6 +85,12 @@ const navigationSections: NavigationSection[] = [
         path: ROUTES_LINKS.staff_route
       },
       {
+        key: "permissions",
+        label: "Permisos del personal",
+        icon: <CircleOffIcon className="h-5 w-5" />,
+        path: ROUTES_LINKS.permissions_route
+      },
+      {
         key: "services",
         label: "Servicios",
         icon: <FileCheck className="h-5 w-5" />,
@@ -101,18 +111,29 @@ const navigationSections: NavigationSection[] = [
   },
 ];
 
-const AppSidebar: React.FC = () => {
-  const pathname = usePathname();
 
+// COMPONENTE PRINCIPAL DE LA BARRA LATERAL
+const AppSidebar: React.FC = () => {
+  // HOOKS
+  const pathname = usePathname();
+  const Navigate = useRouter();
+
+  // STATES
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleMobileSidebar } =
-    useSidebar();
+  // ZUSTAN - STORE
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleMobileSidebar } = useSidebar();
+  const { clearAllSession, userInfo } = useUserStore();
+  const { clearHeadquarter, allHeadquarters, currentHeadquarter } = useHeadquarterStore();
 
+
+
+  // COLLAPSE SIDEBAR
   const isSidebarVisibleExpanded = isExpanded || isHovered || isMobileOpen;
 
+  // CALLBACK PARA CLASS ACTIVE DEL ITEM DE SIDEBAR SELECCIONADO
   const isActive = useCallback(
     (path?: string) => {
       if (!path) return false;
@@ -131,10 +152,10 @@ const AppSidebar: React.FC = () => {
   };
 
   const closeSession = () => {
-    document.cookie = "auth_token=; path=/; max-age=0;";
-    if (typeof window !== "undefined") {
-      window.location.href = ROUTES_LINKS.signin_route;
-    }
+    clearAllSession();
+    clearHeadquarter();
+    deleteCookieToken();
+    Navigate.push(ROUTES_LINKS.signin_route);
   };
 
   // Detectar y abrir submenú activo al cargar ruta
@@ -199,8 +220,8 @@ const AppSidebar: React.FC = () => {
               <span className="text-sm font-bold tracking-tight text-gray-dark dark:text-light leading-tight">
                 Admin Panel
               </span>
-              <span className="text-[11px] font-medium text-gray dark:text-gray-400">
-                Dashboard Template
+              <span className="text-[12px] font-medium text-gray dark:text-gray-400">
+                Dashboard de citas
               </span>
             </div>
           )}
@@ -220,8 +241,12 @@ const AppSidebar: React.FC = () => {
       </div>
 
       {/* Lista de Navegación con Scroll Suave */}
+      {/* LISTA DE ITEMS */}
       <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-3 py-4 duration-300 ease-linear">
         <nav className="space-y-6" aria-label="Navegación principal">
+          {/* SELECT DE SEDES */}
+          <SelectHeadquarters />
+
           {navigationSections.map((section, sIndex) => (
             <div key={section.title || sIndex} className="space-y-1.5">
               {/* Título de Sección o Separador */}
@@ -470,10 +495,10 @@ const AppSidebar: React.FC = () => {
 
                 <div className="flex flex-col min-w-0">
                   <span className="truncate text-xs font-semibold text-gray-dark dark:text-light leading-tight">
-                    Admin User
+                    {userInfo?.name}
                   </span>
                   <span className="truncate text-[11px] text-gray dark:text-gray-400">
-                    admin@dashboard.com
+                    {userInfo?.email}
                   </span>
                 </div>
               </div>

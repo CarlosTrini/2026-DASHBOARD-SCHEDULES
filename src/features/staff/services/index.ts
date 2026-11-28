@@ -9,11 +9,16 @@ import { ResponseDataPaginated } from "@/types/apiTypes";
 
 
 export const StaffActionService = {
-    getAllStaff: async function (page: number = 1, limit: number = 10): Promise<ResponseDataPaginated<Staff>> {
+    getAllStaff: async function (page: number = 1, limit: number = 10, idHq: string): Promise<ResponseDataPaginated<Staff>> {
         // data del personal que se ve en la data
+        await mockDelay();
         try {
+            // 1 - FILTRAR POR LOS QUE PERTENECEN A LA SEDE
+            const staffFiltered = mockStaff.filter(staff => staff.idHeadquarter.includes(idHq));
+
+            // 2- PAGINAR
             const data = makePagination<Staff>({
-                items: mockStaff,
+                items: staffFiltered,
                 page,
                 limit
             })
@@ -24,7 +29,7 @@ export const StaffActionService = {
         }
     },
 
-    getStaffMetrics: async function (): Promise<StaffMetrics> {
+    getStaffMetrics: async function (idHq: string): Promise<StaffMetrics> {
         // todo el personal
         try {
             // const res = await fetch('/api/staff');
@@ -32,17 +37,17 @@ export const StaffActionService = {
 
             // const data: unknown = await res.json();    // unknown: no confiamos todavía
             // return z.array(StaffSchema).parse(data);   // valida y devuelve tipado
-            await mockDelay;
+            const staffFiltered = mockStaff.filter(staff => staff.idHeadquarter.includes(idHq));
 
-            const totalStaff = mockStaff.length;
-            const activeStaff = mockStaff.filter((p) => p.status === "active").length
+            const totalStaff = staffFiltered.length;
+            const activeStaff = staffFiltered.filter((p) => p.status === "active").length
             return {
                 total: totalStaff,
                 status: {
                     active: activeStaff,
-                    inactive: mockStaff.filter((p) => p.status === "inactive").length,
-                    leave: mockStaff.filter((p) => p.status === "vacation").length,
-                    dayOff: mockStaff.filter((p) => p.status === "sick").length
+                    inactive: staffFiltered.filter((p) => p.status === "inactive").length,
+                    leave: staffFiltered.filter((p) => p.status === "vacation").length,
+                    dayOff: staffFiltered.filter((p) => p.status === "sick").length
                 },
                 staffActive: {
                     percentaje: totalStaff > 0 ? Math.round((activeStaff / totalStaff) * 100) : 0,

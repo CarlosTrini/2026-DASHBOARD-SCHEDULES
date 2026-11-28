@@ -30,8 +30,8 @@ import type { UserSystem } from "@/types/systemTypes";
 
 
 // STORES
-// import { useUserStore } from "@/store/userStore";
-// import { useHeadquarterStore } from "@/store/useHeadquarterStore";
+import { useUserStore } from "@/store/useUserStore";
+import { useHeadquarterStore } from "@/store/useHeadquarterStore";
 
 //SERVICES
 import { AuthActionService } from "../services/index";
@@ -40,6 +40,7 @@ import { ROUTES_LINKS } from "@/utils/constants";
 import BackgroundAuth from "../components/BackgroundAuth";
 import Alert from "@/components/ui/alert/Alert";
 import { saveCookieToken } from "@/utils/cookieActionsToken";
+import { HeadquartersActionService } from "@/features/headquarters/services";
 
 
 
@@ -53,8 +54,8 @@ export default function SignInView() {
     const Navigate = useRouter();
 
     // ZUSTAND
-    // const { setToken, setUserInfo, setIsAuthenticated, setUserRole } = useUserStore();
-    // const { setCurrentHeadquarter, setAllHeadquarters, allHeadquarters } = useHeadquarterStore();
+    const { setToken, setUserInfo, setIsAuthenticated, setUserRole } = useUserStore();
+    const { setCurrentHeadquarter, setAllHeadquarters, allHeadquarters } = useHeadquarterStore();
 
 
     // HOOK-FORM
@@ -66,21 +67,18 @@ export default function SignInView() {
 
 
     // MUTATE PARA HEADEQUARTERS
-    // TRAER LA DATA DE LA SEDE SELECCIONADA POR EL USUARIO
-    // const { mutate: handleQuarters } = useMutation({
-    //     mutationKey: ['headquarterbyid'],
-    //     mutationFn: (id: string) => HeadquartersService.getHearquarterById(id),
-    //     onSuccess: (res) => {
-    //         setCurrentHeadquarter(res);
-    //         // se actualiza el role del suaurio en el sistema
-
-
-    //         Navigate.push('/admin');
-    //     },
-    //     onError: (err) => {
-    //         console.error('Error al obtener la sede');
-    //     }
-    // });
+    // TRAER LA DATA DE LA SEDE A LA QUE PERTENECE EL USUARIO (CON UNA SEDE)
+    const { mutate: handleQuarters } = useMutation({
+        mutationKey: ['headquarter-by-id'],
+        mutationFn: (id: string) => HeadquartersActionService.getHqsById(id),
+        onSuccess: (res) => {
+            setCurrentHeadquarter(res);
+            Navigate.push(ROUTES_LINKS.admin_route);
+        },
+        onError: (err) => {
+            console.error('Error al obtener la sede');
+        }
+    });
 
 
     // const queryClient = useQueryClient();
@@ -91,34 +89,25 @@ export default function SignInView() {
         onSuccess: (res) => {
             const dataUser = res;
             console.log(dataUser)
+
             if (dataUser) {
                 saveCookieToken(dataUser.token);
 
 
-                // setToken(dataUser.token);
-                // setUserInfo({
-                //     id: userInfo.id,
-                //     assigments: userInfo.locationAssignments,
-                //     emailVerified: userInfo.security.emailVerified,
-                //     image: userInfo.image,
-                //     name: userInfo.personalInfo.name,
-                //     lastName: userInfo.personalInfo.lastName,
-                //     status: userInfo.status,
-                //     email: userInfo.contactInfo.email
-                // });
-                // setIsAuthenticated(true);
-                // reset();
-                // setErrorMsg('');
+                setToken(dataUser.token);
+                setUserInfo(dataUser);
+                setIsAuthenticated(true);
+                reset();
+                // Navigate.push('/admin');
 
-                // revisar a cuantás sedes pertenece este persona
-                // if (userInfo.locationAssignments.length >= 2) {
-                //     // TOOD: SE VA A MOSTRAR UN OVERLAY EN EL QUE SELECCIONÉ LA SEDE QUE VA A USAR
-                //     setAllHeadquarters(userInfo.locationAssignments);
-                //     Navigate.push('/admin/overlay');
-                // } else {
-                //     handleQuarters(userInfo.locationAssignments[0].headquartersId);
-                //     setUserRole(userInfo.locationAssignments[0].roleSystem);
-                // }
+                // // revisar a cuantás sedes pertenece este persona
+                if (dataUser.idHeadquarter.length >= 2) {
+                    // TOOD: SE VA A MOSTRAR UN OVERLAY EN EL QUE SELECCIONÉ LA SEDE QUE VA A USAR PARA INICIAR SESIÓN
+                    setAllHeadquarters(dataUser.idHeadquarter); // son ids... o id...
+                    Navigate.push(ROUTES_LINKS.overlay_route);
+                } else {
+                    handleQuarters(dataUser.idHeadquarter[0]);
+                }
             }
         },
         onError: (err: any) => {
@@ -199,9 +188,9 @@ export default function SignInView() {
                                 aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
                             >
                                 {showPassword ? (
-                                    <EyeIcon className="text-light h-5 w-5" />
+                                    <EyeIcon className="text-brand h-5 w-5" />
                                 ) : (
-                                    <EyeClosedIcon className="text-light h-5 w-5" />
+                                    <EyeClosedIcon className="text-brand h-5 w-5" />
                                 )}
                             </button>
                         </div>

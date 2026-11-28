@@ -1,4 +1,4 @@
-import { RoleSystem } from "./systemTypes";
+import { SystemPermission } from "./systemTypes";
 
 export type SidebarNavItem = {
   key: string;
@@ -7,11 +7,13 @@ export type SidebarNavItem = {
   path?: string;
   badge?: string;
   section?: string;
+  permissions?: SystemPermission[];
   subItems?: {
     key: string;
     label: string;
     path: string;
     badge?: string;
+    permissions?: SystemPermission[];
   }[];
 };
 
@@ -22,14 +24,14 @@ export interface NavItem {
   path?: string;
   target?: string;
   badge?: string;
-  permissions?: RoleSystem[];
+  permissions?: SystemPermission[];
   subItems?: {
     key: string;
     title?: string;
     path: string;
     badge?: string;
     target?: string;
-    permissions?: RoleSystem[];
+    permissions?: SystemPermission[];
   }[];
 }
 

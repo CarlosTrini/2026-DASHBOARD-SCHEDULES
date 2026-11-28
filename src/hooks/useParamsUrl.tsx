@@ -26,9 +26,9 @@ export const useParamsUrl = () => {
     }
 
     const updateUrl = () => {
-        // if (!window) return;
-        // const query = params.toString();
-        // window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+        if (!window) return;
+        const query = params.toString();
+        window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
     }
 
     return {

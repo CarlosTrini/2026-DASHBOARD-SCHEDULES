@@ -35,6 +35,7 @@ import { usePagination } from "@/hooks/usePagination";
 import Pagination from "@/components/common/Pagination";
 import { useSearchParams } from "next/navigation";
 import { useParamsUrl } from "@/hooks/useParamsUrl";
+import { useHeadquarterStore } from "@/store/useHeadquarterStore";
 
 // Configuración de columnas de la tabla
 const COLUMNS = [
@@ -51,10 +52,10 @@ const ROLE_CONFIG: Record<
     Staff["role"],
     { label: string; color: "primary" | "info" | "success" | "warning" }
 > = {
-    admin: { label: "Administrador", color: "primary" },
-    dentist: { label: "Dentista", color: "success" },
+    administrator: { label: "Administrador", color: "primary" },
+    employee: { label: "Empleado", color: "success" },
     receptionist: { label: "Recepcionista", color: "info" },
-    assistant: { label: "Asistente Dental", color: "warning" },
+    "": { label: "Sin rol", color: "warning" },
 };
 
 // Configuración visual de Estados
@@ -77,7 +78,7 @@ const STATUS_CONFIG: Record<
 const StaffTable: React.FC = () => {
 
     // HOOKS
-    const { isMobile } = useIsMobile();
+    const { isMobile } = useIsMobile(900);
     const {
         page,
         limit,
@@ -87,6 +88,7 @@ const StaffTable: React.FC = () => {
         setPaginationInfo,
     } = usePagination({ initLimit: 10, initPage: 1 }); // ESTE ES NECESARIO CADA QUE SE USE EL PAGINADOR
     const { updateAddParam, deleteParam, getParam } = useParamsUrl();
+    const { currentHeadquarter } = useHeadquarterStore();
 
     // STATES
     const [toggleTable, setToggleTable] = useState<"table" | "cards">("table");
@@ -104,8 +106,8 @@ const StaffTable: React.FC = () => {
         error,
         refetch,
     } = useQuery<Staff[]>({
-        queryKey: ["staff-table", page, limit],
-        queryFn: () => StaffActionService.getAllStaff(page, limit)
+        queryKey: ["staff-table", page, limit, currentHeadquarter?.id],
+        queryFn: () => StaffActionService.getAllStaff(page, limit, currentHeadquarter?.id!)
             .then(res => {
                 setPaginationInfo({ ...res });
                 return res.docs
@@ -156,7 +158,7 @@ const StaffTable: React.FC = () => {
             });
     };
 
-    // Skeleton Loade
+    // SKELETON LOADER
     const StaffSkeleton = () => (
         <div className="w-full rounded-2xl border border-gray/15 bg-light-accent dark:border-gray/20 dark:bg-black-light p-4 space-y-4 animate-pulse">
             <div className="h-10 w-full rounded-xl bg-gray/10 dark:bg-gray/20" />
@@ -184,6 +186,7 @@ const StaffTable: React.FC = () => {
     // EFFECTS
     // Adaptación automática a móvil
     useEffect(() => {
+        console.log(isMobile)
         setToggleTable(isMobile ? "cards" : "table");
     }, [isMobile]);
 
@@ -192,12 +195,12 @@ const StaffTable: React.FC = () => {
     // Componente de Sin Resultados
     const NoDataStaffPlaceholder = () => (
         <div className="h-[40vh] flex flex-col items-center justify-center gap-3 text-center p-6">
-            <figure className="size-16 overflow-hidden rounded-full border border-gray/20">
+            <figure className="size-26 overflow-hidden rounded-full border border-gray/20">
                 <Image
-                    src="/images/no-results.jpg"
+                    src="/images/no-results.png"
                     alt="Sin resultados"
-                    width={100}
-                    height={100}
+                    width={150}
+                    height={150}
                     className="object-cover size-full"
                 />
             </figure>
@@ -449,7 +452,7 @@ const StaffTable: React.FC = () => {
                                 return (
                                     <article
                                         key={staff.id}
-                                        className="flex flex-col justify-between gap-4 p-5 rounded-2xl border border-gray/15 bg-light-accent shadow-theme-xs hover:border-brand/40 dark:border-gray/20 dark:bg-black-light transition"
+                                        className="flex flex-col justify-between gap-4 p-5 rounded-2xl border border-gray/50 bg-light-accent shadow-theme-xs hover:border-brand dark:border-gray/50 dark:bg-black-light transition"
                                     >
                                         {/* Header de Tarjeta: Avatar + Nombre + Estado */}
                                         <div className="flex items-start justify-between gap-3">

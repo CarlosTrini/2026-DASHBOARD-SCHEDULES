@@ -5,14 +5,17 @@ import { useQuery } from '@tanstack/react-query';
 import { StaffActionService } from '../services';
 import Fallback from '@/components/fallbackQuery/Fallback';
 import Skeleton from '@/components/skeleton/Skeleton';
+import { useHeadquarterStore } from '@/store/useHeadquarterStore';
 
 function Metrics() {
 
+    // STORE
+    const { currentHeadquarter } = useHeadquarterStore();
 
     // QUERY
     const { data: staffMetrics, isLoading, isError } = useQuery({
-        queryKey: ['staff-metrics'],
-        queryFn: () => StaffActionService.getStaffMetrics(),
+        queryKey: ['staff-metrics', currentHeadquarter?.id!],
+        queryFn: () => StaffActionService.getStaffMetrics(currentHeadquarter?.id!),
         placeholderData: (previousData) => previousData, // ✅ ESTA LÍNEA ELIMINA EL FLASHAZO
     });
 
